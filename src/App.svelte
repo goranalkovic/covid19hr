@@ -5,247 +5,18 @@
   import { onMount } from "svelte";
   import { fade } from "svelte/transition/";
 
-  let dateAxis = [
-    "25.2.",
-    "26.2.",
-    "27.2.",
-    "28.2.",
-    "29.2.",
-    "1.3.",
-    "2.3.",
-    "3.3.",
-    "4.3.",
-    "5.3.",
-    "6.3.",
-    "7.3.",
-    "8.3.",
-    "9.3.",
-    "10.3.",
-    "11.3.",
-    "12.3.",
-    "13.3.",
-    "14.3.",
-    "15.3.",
-    "16.3.",
-    "17.3.",
-    "18.3.",
-    "19.3.",
-    "20.3.",
-    "21.3.",
-    "22.3.",
-    "23.3.",
-    "24.3.",
-    "25.3.",
-    "26.3.",
-    "27.3.",
-    "28.3.",
-    "29.3.",
-    "30.3.",
-    "31.3.",
-    "1.4.",
-    "2.4.",
-    "3.4.",
-    "4.4.",
-    "5.4.",
-    "6.4.",
-    "7.4.",
-    "8.4.",
-    "9.4.",
-    "10.4.",
-    "11.4.",
-    "12.4.",
-    "13.4.",
-    "14.4.",
-    "15.4.",
-    "16.4.",
-    "17.4.",
-    "18.4.",
-    "19.4.",
-    "20.4."
-  ];
-  let totalCases = [
-    1,
-    2,
-    3,
-    3,
-    5,
-    7,
-    8,
-    9,
-    9,
-    10,
-    10,
-    11,
-    12,
-    12,
-    13,
-    16,
-    19,
-    32,
-    37,
-    49,
-    57,
-    69,
-    89,
-    105,
-    128,
-    206,
-    254,
-    315,
-    382,
-    442,
-    495,
-    586,
-    657,
-    713,
-    790,
-    867,
-    963,
-    1011,
-    1079,
-    1126,
-    1182,
-    1222,
-    1282,
-    1343,
-    1407,
-    1495,
-    1534,
-    1600,
-    1650,
-    1704,
-    1741,
-    1791,
-    1814,
-    1832,
-    1871,
-    1881
-  ];
-  let recoveries = [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    1,
-    2,
-    3,
-    4,
-    5,
-    5,
-    5,
-    5,
-    5,
-    5,
-    5,
-    16,
-    22,
-    22,
-    37,
-    49,
-    52,
-    64,
-    67,
-    73,
-    88,
-    92,
-    119,
-    125,
-    130,
-    167,
-    179,
-    219,
-    231,
-    323,
-    373,
-    400,
-    415,
-    473,
-    529,
-    600,
-    615,
-    709,
-    771
-  ];
-  let deaths = [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    3,
-    3,
-    5,
-    6,
-    6,
-    6,
-    6,
-    7,
-    8,
-    12,
-    15,
-    16,
-    18,
-    19,
-    20,
-    21,
-    21,
-    23,
-    25,
-    31,
-    33,
-    35,
-    36,
-    39,
-    47,
-    47
-  ];
-  let activeCases = [];
-  let totalCasesDelta = [];
-  let totalCasesR0 = [];
-  let recoveriesDelta = [];
-  let deathsDelta = [];
-  let activeCasesDelta = [];
-  let summaryData = [];
-
-  let lastUpdate = "20.4.2020.";
+  let dateAxis,
+    totalCases,
+    recoveries,
+    deaths,
+    activeCases,
+    totalCasesDelta,
+    totalCasesR0,
+    recoveriesDelta,
+    deathsDelta,
+    activeCasesDelta,
+    summaryData,
+    lastUpdate;
 
   const round = num => {
     return +(Math.round(num + "e+3") + "e-3");
@@ -275,6 +46,22 @@
 
   onMount(async () => {
     // Fetch data
+    let response = await fetch("data.json");
+    let json = await response.json();
+
+    dateAxis = [];
+    totalCases = [];
+    recoveries = [];
+    deaths = [];
+
+    for (let record of json.data) {
+      dateAxis.push(record.day);
+      totalCases.push(record.total);
+      recoveries.push(record.recovered);
+      deaths.push(record.dead);
+    }
+
+    lastUpdate = json.lastUpdate;
 
     // Active cases
     activeCases = [];
@@ -320,17 +107,39 @@
 
   {#if !loading}
     <div transition:fade>
-      <p>
+      <p style="text-align: center; opacity: 0.6;">
         Zadnje ažurirano
         <strong>{lastUpdate}</strong>
       </p>
 
       <Summary input={summaryData} />
-      <CaseData {dateAxis} {totalCases} {recoveries} {deaths} {activeCases} />
+      <CaseData
+        {dateAxis}
+        {totalCases}
+        {recoveries}
+        {deaths}
+        {activeCases}
+        {totalCasesDelta}
+        {deathsDelta} />
       <Rzero {dateAxis} input={totalCasesR0} />
 
-      <section>
-        <a href="https://koronavirus.hr">Visit the official government site</a>
+      <section style="max-width: 400px; text-align: center; margin: 2em auto;">
+        <h4>
+          <span style="color: orange;">⚠</span>
+          Napomena
+        </h4>
+        <br />
+        <p>
+          Ovi su podaci prikupljeni prema informacijama sa sjednica Nacionalnog
+          stožera, pa je moguće da se u prijenosu podataka pojavila greška.
+        </p>
+        <p>
+          Potpuno službene i provjerene podatke uvijek možete dobiti na
+          službenoj stranici
+          <a href="https://koronavirus.hr">koronavirus.hr</a>
+
+        </p>
+        <br />
       </section>
 
       <section>
@@ -384,10 +193,7 @@
     </div>
   {:else}Dohvaćam podatke...{/if}
 
-  <footer style="margin-top: 3em">
-
-    <p>Podaci ručno prikupljeni sa sjednica Nacionalnog stožera</p>
-    <br />
+  <footer style="margin: 2em auto;">
     <p>
       Copyright
       <a href="https://goranalkovic.com">Goran Alković</a>
