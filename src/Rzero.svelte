@@ -9,6 +9,18 @@
       {
         values: [...input]
       }
+    ],
+    yMarkers: [
+      {
+        label: "Još OK",
+        value: 1,
+        options: { labelPos: "left" }
+      },
+      {
+        label: "Nije optimalno",
+        value: 2,
+        options: { labelPos: "left" }
+      }
     ]
   };
 
