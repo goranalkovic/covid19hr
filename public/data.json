@@ -359,7 +359,13 @@
             "total": 2009,
             "recovered": 982,
             "dead": 51
+        },
+        {
+            "day": "25.4.",
+            "total": 2016,
+            "recovered": 1034,
+            "dead": 54
         }
     ],
-    "lastUpdate": "24.4.2020. 14:09"
+    "lastUpdate": "25.4.2020. 14:10"
 }
