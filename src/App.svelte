@@ -100,6 +100,22 @@
   :global(h1, h2, h3, h4, h5) {
     text-align: center;
   }
+
+  .table-container {
+    overflow-x: auto;
+  }
+
+  @media (max-width: 800px) {
+    .table-container {
+      width: 90vw;
+      overflow-x: scroll;
+      margin: 0 auto;
+    }
+
+    table {
+      width: 1000px;
+    }
+  }
 </style>
 
 <main>
@@ -146,49 +162,51 @@
         <h4>Tablični prikaz</h4>
         <br />
 
-        <table>
-          <thead>
-            <tr>
-              <th>Dan</th>
-              <th>Datum</th>
-              <th>Ukupno slučajeva</th>
-              <th>
-                R
-                <sub>0</sub>
-              </th>
-              <th>Oporavljenih</th>
-              <th>Umrlih</th>
-              <th>Aktivnih slučajeva</th>
-            </tr>
-          </thead>
-          <tbody>
-            {#each totalCases as currentCase, i}
+        <div class="table-container">
+          <table>
+            <thead>
               <tr>
-                <td>{i + 1}</td>
-                <td>{dateAxis[i]}</td>
-                <td>
-                  {totalCases[i]}
-                  {#if totalCasesDelta[i] != 0}(+{totalCasesDelta[i]}){/if}
-                </td>
-                <td>{totalCasesR0[i]}</td>
-                <td>
-                  {recoveries[i]}
-                  {#if recoveriesDelta[i] != 0}(+{recoveriesDelta[i]}){/if}
-                </td>
-                <td>
-                  {deaths[i]}
-                  {#if deathsDelta[i] != 0}(+{deathsDelta[i]}){/if}
-                </td>
-                <td>
-                  {activeCases[i]}
-                  {#if activeCasesDelta[i] != 0}
-                    ({activeCasesDelta[i] < 0 ? '' : '+'}{activeCasesDelta[i]})
-                  {/if}
-                </td>
+                <th>Dan</th>
+                <th>Datum</th>
+                <th>Ukupno slučajeva</th>
+                <th>
+                  R
+                  <sub>0</sub>
+                </th>
+                <th>Oporavljenih</th>
+                <th>Umrlih</th>
+                <th>Aktivnih slučajeva</th>
               </tr>
-            {/each}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {#each totalCases as currentCase, i}
+                <tr>
+                  <td>{i + 1}</td>
+                  <td>{dateAxis[i]}</td>
+                  <td>
+                    {totalCases[i]}
+                    {#if totalCasesDelta[i] != 0}(+{totalCasesDelta[i]}){/if}
+                  </td>
+                  <td>{totalCasesR0[i]}</td>
+                  <td>
+                    {recoveries[i]}
+                    {#if recoveriesDelta[i] != 0}(+{recoveriesDelta[i]}){/if}
+                  </td>
+                  <td>
+                    {deaths[i]}
+                    {#if deathsDelta[i] != 0}(+{deathsDelta[i]}){/if}
+                  </td>
+                  <td>
+                    {activeCases[i]}
+                    {#if activeCasesDelta[i] != 0}
+                      ({activeCasesDelta[i] < 0 ? '' : '+'}{activeCasesDelta[i]})
+                    {/if}
+                  </td>
+                </tr>
+              {/each}
+            </tbody>
+          </table>
+        </div>
       </section>
     </div>
   {:else}Dohvaćam podatke...{/if}
