@@ -16,7 +16,8 @@
     deathsDelta,
     activeCasesDelta,
     summaryData,
-    lastUpdate;
+    lastUpdate,
+    r0avg;
 
   const round = num => {
     return +(Math.round(num + "e+3") + "e-3");
@@ -40,6 +41,15 @@
       }
     }
     return output;
+  };
+
+  const calcR0average = input => {
+    let output = 0;
+    for (let i of input) {
+      output += i;
+    }
+
+    return output / input.length;
   };
 
   let loading = true;
@@ -86,6 +96,9 @@
       recoveries.slice(-1).pop(),
       deaths.slice(-1).pop()
     ];
+
+    // R0 average
+    r0avg = calcR0average(totalCasesR0);
 
     // Ready!
     loading = false;
@@ -137,7 +150,7 @@
         {activeCases}
         {totalCasesDelta}
         {deathsDelta} />
-      <Rzero {dateAxis} input={totalCasesR0} />
+      <Rzero {dateAxis} input={totalCasesR0} {r0avg} />
 
       <section style="max-width: 400px; text-align: center; margin: 2em auto;">
         <h4>
@@ -169,10 +182,7 @@
                 <th>Dan</th>
                 <th>Datum</th>
                 <th>Ukupno slučajeva</th>
-                <th>
-                  R
-                  <sub>0</sub>
-                </th>
+                <th>R₀</th>
                 <th>Oporavljenih</th>
                 <th>Umrlih</th>
                 <th>Aktivnih slučajeva</th>
@@ -207,6 +217,7 @@
             </tbody>
           </table>
         </div>
+
       </section>
     </div>
   {:else}Dohvaćam podatke...{/if}
