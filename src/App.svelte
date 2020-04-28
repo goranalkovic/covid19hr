@@ -2,6 +2,7 @@
   import Summary from "./Summary.svelte";
   import CaseData from "./CaseData.svelte";
   import Rzero from "./Rzero.svelte";
+  import Spinner from "./Spinner.svelte";
   import { onMount } from "svelte";
   import { fade } from "svelte/transition/";
 
@@ -17,7 +18,8 @@
     activeCasesDelta,
     summaryData,
     lastUpdate,
-    r0avg;
+    r0avg,
+    err = null;
 
   const round = num => {
     return +(Math.round(num + "e+3") + "e-3");
@@ -56,52 +58,67 @@
 
   onMount(async () => {
     // Fetch data
-    let response = await fetch("data.json");
-    let json = await response.json();
+    let response;
+    try {
+      response = await fetch(
+        "https://api.jsonbin.io/b/5ea771be66e603359fdfd330/latest",
+        {
+          method: "GET",
+          headers: {
+            "secret-key":
+              "$2b$10$iDj21mWHRqHDHxbScv4fR.0/.C2Iece5C4.eykPNV3jKXRMlxbBiO"
+          }
+        }
+      );
 
-    dateAxis = [];
-    totalCases = [];
-    recoveries = [];
-    deaths = [];
+      let json = await response.json();
 
-    for (let record of json.data) {
-      dateAxis.push(record.day);
-      totalCases.push(record.total);
-      recoveries.push(record.recovered);
-      deaths.push(record.dead);
+      dateAxis = [];
+      totalCases = [];
+      recoveries = [];
+      deaths = [];
+
+      for (let record of json.data) {
+        dateAxis.push(record.day);
+        totalCases.push(record.total);
+        recoveries.push(record.recovered);
+        deaths.push(record.dead);
+      }
+
+      lastUpdate = json.lastUpdate;
+
+      // Active cases
+      activeCases = [];
+
+      for (let i in dateAxis) {
+        let value = totalCases[i] - recoveries[i] - deaths[i];
+        activeCases.push(value);
+      }
+
+      // Deltas
+      totalCasesDelta = [...calculateDeltas(totalCases)];
+      recoveriesDelta = [...calculateDeltas(recoveries)];
+      deathsDelta = [...calculateDeltas(deaths)];
+      activeCasesDelta = [...calculateDeltas(activeCases)];
+
+      // R0
+      totalCasesR0 = [...calculateR0(totalCasesDelta)];
+
+      // Summary
+      summaryData = [
+        activeCases.slice(-1).pop(),
+        recoveries.slice(-1).pop(),
+        deaths.slice(-1).pop()
+      ];
+
+      // R0 average
+      r0avg = calcR0average(totalCasesR0);
+
+      // Ready!
+      loading = false;
+    } catch (error) {
+      err = error;
     }
-
-    lastUpdate = json.lastUpdate;
-
-    // Active cases
-    activeCases = [];
-
-    for (let i in dateAxis) {
-      let value = totalCases[i] - recoveries[i] - deaths[i];
-      activeCases.push(value);
-    }
-
-    // Deltas
-    totalCasesDelta = [...calculateDeltas(totalCases)];
-    recoveriesDelta = [...calculateDeltas(recoveries)];
-    deathsDelta = [...calculateDeltas(deaths)];
-    activeCasesDelta = [...calculateDeltas(activeCases)];
-
-    // R0
-    totalCasesR0 = [...calculateR0(totalCasesDelta)];
-
-    // Summary
-    summaryData = [
-      activeCases.slice(-1).pop(),
-      recoveries.slice(-1).pop(),
-      deaths.slice(-1).pop()
-    ];
-
-    // R0 average
-    r0avg = calcR0average(totalCasesR0);
-
-    // Ready!
-    loading = false;
   });
 
   function timeout(ms) {
@@ -220,7 +237,19 @@
 
       </section>
     </div>
-  {:else}Dohvaćam podatke...{/if}
+  {:else if err}
+    <div style="text-align: center">
+      <h1>❌</h1>
+      <h4>Dogodila se greška</h4>
+      <p
+        style="opacity: 0.5; margin-top: 1rem; font-size: 0.9em; font-family:
+        monospace">
+        {err}
+      </p>
+    </div>
+  {:else}
+    <Spinner />
+  {/if}
 
   <footer style="margin: 2em auto;">
     <p>
