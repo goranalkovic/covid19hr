@@ -3,7 +3,21 @@
   import CaseData from "./CaseData.svelte";
   import Rzero from "./Rzero.svelte";
   import Spinner from "./Spinner.svelte";
+  import TableView from "./TableView.svelte";
+  import Notice from "./Notice.svelte";
+  import LogGraphs from "./LogGraphs.svelte";
   import { onMount } from "svelte";
+
+  import TopAppBar, {
+    Row,
+    Section,
+    Title,
+    FixedAdjust,
+    DenseFixedAdjust,
+    ProminentFixedAdjust,
+    ShortFixedAdjust,
+  } from "@smui/top-app-bar";
+
   import { fade } from "svelte/transition/";
 
   let dateAxis,
@@ -21,11 +35,11 @@
     r0avg,
     err = null;
 
-  const round = num => {
-    return +(Math.round(num + "e+3") + "e-3");
+  const round = (num, decimals = 3) => {
+    return 1 * num.toFixed(decimals);
   };
 
-  const calculateDeltas = input => {
+  const calculateDeltas = (input) => {
     let output = [0];
     for (let i = 1; i < input.length; i++) {
       output.push(input[i] - input[i - 1]);
@@ -33,7 +47,7 @@
     return output;
   };
 
-  const calculateR0 = input => {
+  const calculateR0 = (input) => {
     let output = [0];
     for (let i = 1; i < input.length; i++) {
       if (input[i - 1] == 0) {
@@ -45,7 +59,7 @@
     return output;
   };
 
-  const calcR0average = input => {
+  const calcR0average = (input) => {
     let output = 0;
     for (let i of input) {
       output += i;
@@ -66,8 +80,8 @@
           method: "GET",
           headers: {
             "secret-key":
-              "$2b$10$iDj21mWHRqHDHxbScv4fR.0/.C2Iece5C4.eykPNV3jKXRMlxbBiO"
-          }
+              "$2b$10$iDj21mWHRqHDHxbScv4fR.0/.C2Iece5C4.eykPNV3jKXRMlxbBiO",
+          },
         }
       );
 
@@ -108,7 +122,7 @@
       summaryData = [
         activeCases.slice(-1).pop(),
         recoveries.slice(-1).pop(),
-        deaths.slice(-1).pop()
+        deaths.slice(-1).pop(),
       ];
 
       // R0 average
@@ -122,7 +136,7 @@
   });
 
   function timeout(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 </script>
 
@@ -130,35 +144,33 @@
   :global(h1, h2, h3, h4, h5) {
     text-align: center;
   }
-
-  .table-container {
-    overflow-x: auto;
-  }
-
-  @media (max-width: 800px) {
-    .table-container {
-      width: 90vw;
-      overflow-x: scroll;
-      margin: 0 auto;
-    }
-
-    table {
-      width: 1000px;
-    }
-  }
 </style>
 
-<main>
-  <h1>COVID-19 podaci</h1>
+<TopAppBar variant="fixed">
+  <Row>
+    <Section>
+      <Title>COVID-19 podaci</Title>
+    </Section>
+    <Section align="end">
+
+      {#if !loading}
+        <p>
+          Zadnje ažurirano
+          <strong>{lastUpdate}</strong>
+        </p>
+      {/if}
+
+    </Section>
+  </Row>
+</TopAppBar>
+
+<main style="padding-top: 100px">
 
   {#if !loading}
-    <div transition:fade>
-      <p style="text-align: center; opacity: 0.6;">
-        Zadnje ažurirano
-        <strong>{lastUpdate}</strong>
-      </p>
+    <div>
 
       <Summary input={summaryData} />
+
       <CaseData
         {dateAxis}
         {totalCases}
@@ -167,75 +179,25 @@
         {activeCases}
         {totalCasesDelta}
         {deathsDelta} />
+
       <Rzero {dateAxis} input={totalCasesR0} {r0avg} />
 
-      <section style="max-width: 400px; text-align: center; margin: 2em auto;">
-        <h4>
-          <span style="color: orange;">⚠</span>
-          Napomena
-        </h4>
-        <br />
-        <p>
-          Ovi su podaci prikupljeni prema informacijama sa sjednica Nacionalnog
-          stožera, pa je moguće da se u prijenosu podataka pojavila greška.
-        </p>
-        <p>
-          Potpuno službene i provjerene podatke uvijek možete dobiti na
-          službenoj stranici
-          <a href="https://koronavirus.hr">koronavirus.hr</a>
+      <LogGraphs {dateAxis} {totalCases} {recoveries} {deaths} {activeCases} />
 
-        </p>
-        <br />
-      </section>
+      <TableView
+        {totalCases}
+        {totalCasesDelta}
+        {totalCasesR0}
+        {recoveries}
+        {recoveriesDelta}
+        {deaths}
+        {deathsDelta}
+        {activeCases}
+        {activeCasesDelta}
+        {dateAxis}
+        {r0avg} />
 
-      <section>
-        <h4>Tablični prikaz</h4>
-        <br />
-
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Dan</th>
-                <th>Datum</th>
-                <th>Ukupno slučajeva</th>
-                <th>R₀</th>
-                <th>Oporavljenih</th>
-                <th>Umrlih</th>
-                <th>Aktivnih slučajeva</th>
-              </tr>
-            </thead>
-            <tbody>
-              {#each totalCases as currentCase, i}
-                <tr>
-                  <td>{i + 1}</td>
-                  <td>{dateAxis[i]}</td>
-                  <td>
-                    {totalCases[i]}
-                    {#if totalCasesDelta[i] != 0}(+{totalCasesDelta[i]}){/if}
-                  </td>
-                  <td>{totalCasesR0[i]}</td>
-                  <td>
-                    {recoveries[i]}
-                    {#if recoveriesDelta[i] != 0}(+{recoveriesDelta[i]}){/if}
-                  </td>
-                  <td>
-                    {deaths[i]}
-                    {#if deathsDelta[i] != 0}(+{deathsDelta[i]}){/if}
-                  </td>
-                  <td>
-                    {activeCases[i]}
-                    {#if activeCasesDelta[i] != 0}
-                      ({activeCasesDelta[i] < 0 ? '' : '+'}{activeCasesDelta[i]})
-                    {/if}
-                  </td>
-                </tr>
-              {/each}
-            </tbody>
-          </table>
-        </div>
-
-      </section>
+      <Notice />
     </div>
   {:else if err}
     <div style="text-align: center">
@@ -251,12 +213,12 @@
     <Spinner />
   {/if}
 
-  <footer style="margin: 2em auto;">
-    <p>
+  <footer style="margin: 2em auto; text-align: center">
+    <small>
       Copyright
       <a href="https://goranalkovic.com">Goran Alković</a>
-      , 2020
-    </p>
+      2020
+    </small>
   </footer>
 
 </main>
