@@ -155,7 +155,7 @@
 
       {#if !loading}
         <p>
-          Zadnje ažurirano
+          Ažurirano
           <strong>{lastUpdate}</strong>
         </p>
       {/if}
