@@ -38,6 +38,7 @@
   }
 
   $: paginationSteps = Math.ceil(totalCases.length / pageSize);
+
   $: paginationArray = [...Array(paginationSteps).keys()].map((x) => ++x);
   $: dataIndices = range((currentPage - 1) * pageSize, pageSize);
 
@@ -55,6 +56,8 @@
     var x = window.matchMedia("(max-width: 900px)");
     myFunction(x); // Call listener function at run time
     x.addListener(myFunction);
+
+    currentPage = paginationSteps;
   });
 </script>
 
