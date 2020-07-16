@@ -11,12 +11,22 @@ html, body {
 	margin: 0;
 } */
 
+.topbar-icon {
+	color: #6200ee
+}
+
 @media (prefers-color-scheme: dark) {
 	html {
 		--mdc-theme-background: #121212;
 		--mdc-theme-surface: #202020;
 		--mdc-theme-primary: #BB86FC;
 		--mdc-theme-secondary: #aaa;
+	}
+	.topbar-icon {
+		color: #BB86FC
+	}
+	.mdc-select:not(.mdc-select--disabled) {
+		background: #191919 !important;
 	}
 	.mdc-top-app-bar {
 		--mdc-theme-primary: #323232;
@@ -29,6 +39,21 @@ html, body {
 	}
 	.mdc-data-table__row {
 		border-top-color: rgba(255, 255, 255, 0.12) !important;
+	}
+	.mdc-list-item {
+		color: #fff !important
+	}
+	.mdc-select:not(.mdc-select--focused):not(.mdc-select--activated) .mdc-notched-outline__leading, .mdc-select:not(.mdc-select--focused):not(.mdc-select--activated) .mdc-notched-outline__notch, .mdc-select:not(.mdc-select--focused):not(.mdc-select--activated) .mdc-notched-outline__trailing {
+		border-color: #eee !important;
+	}
+	.mdc-select:not(.mdc-select--focused):not(.mdc-select--activated) .mdc-select__dropdown-icon {
+		filter: brightness(100%) contrast(0);
+	}
+	.mdc-select__selected-text {
+		color: #ffffffde !important;
+	}
+	.mdc-select:not(.mdc-select--disabled) .mdc-floating-label {
+		color: rgba(240, 240, 240, .6) !important;
 	}
 	body {
 		background: #121212;

@@ -2,6 +2,8 @@
   import DataTable, { Head, Body, Row, Cell } from "@smui/data-table";
   import Button, { Group, GroupItem, Label } from "@smui/button";
   import IconButton, { Icon } from "@smui/icon-button";
+  import Select, { Option } from "@smui/select";
+
   import { onMount } from "svelte";
 
   export let totalCases;
@@ -34,7 +36,12 @@
   };
 
   function range(start, count) {
-    return Array.apply(0, Array(count)).map((element, index) => index + start);
+    let output = [];
+    for (let i = 0; i < count; i++) {
+      output.push(start + i);
+    }
+    return output;
+    // return Array.apply(0, Array(count)).map((element, index) => index + start);
   }
 
   $: paginationSteps = Math.ceil(totalCases.length / pageSize);
@@ -54,7 +61,7 @@
 
   onMount(() => {
     var x = window.matchMedia("(max-width: 900px)");
-    myFunction(x); // Call listener function at run time
+    myFunction(x);
     x.addListener(myFunction);
 
     currentPage = paginationSteps;
@@ -70,16 +77,58 @@
     align-items: center;
     max-width: 1400px;
   }
+
+  .current-pg {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid transparent;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0);
+    background: var(--background);
+    text-align: center;
+    font-family: "Roboto", sans-serif;
+    font-size: 0.9rem;
+    transition: 0.1s background-color ease-in;
+  }
+
+  .current-pg:hover,
+  .current-pg:active {
+    background: var(--mdc-theme-background);
+  }
+
+  /* Chrome, Safari, Edge, Opera */
+  .current-pg::-webkit-outer-spin-button,
+  .current-pg::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  .current-pg {
+    -moz-appearance: textfield;
+  }
 </style>
 
 <section>
   <h1>Tablični prikaz</h1>
   <br />
-
+  <Select
+    enhanced
+    variant="filled"
+    label="Zapisa po stranici"
+    bind:value={pageSize}>
+    <Option on:click={() => (currentPage = 1)} value="5">5</Option>
+    <Option on:click={() => (currentPage = 1)} selected value="10">10</Option>
+    <Option on:click={() => (currentPage = 1)} value="15">15</Option>
+    <Option on:click={() => (currentPage = 1)} value="25">25</Option>
+    <Option on:click={() => (currentPage = 1)} value="50">50</Option>
+    <Option on:click={() => (currentPage = 1)} value="100">100</Option>
+  </Select>
+  <br />
   <DataTable
     style="min-width: 400px; width: {tableWidth}; max-width: 800px;"
     table$aria-label="Tablični prikaz">
     <Head>
+
       <Row>
         <Cell>Dan</Cell>
         <Cell>Datum</Cell>
@@ -95,7 +144,12 @@
         {#if totalCases[i] != null}
           <Row>
             <Cell>{i + 1}</Cell>
-            <Cell>{dateAxis[i]}</Cell>
+            <Cell>
+              {new Intl.DateTimeFormat('hr', {
+                month: 'numeric',
+                day: 'numeric',
+              }).format(dateAxis[i])}
+            </Cell>
             <Cell>
               {totalCases[i]}
               {#if totalCasesDelta[i] != 0}
@@ -140,11 +194,16 @@
         <Cell>{average(activeCasesDelta)}</Cell>
       </Row>
       <Row>
-        <Cell colspan="4" />
 
+        <Cell colspan="4" />
         <Cell colspan="2" style="text-align: right">
           <small>Stranica</small>
-          {currentPage}
+          <input
+            class="current-pg"
+            type="number"
+            min="1"
+            bind:value={currentPage}
+            max={paginationSteps} />
           <small>od</small>
           {paginationSteps}
         </Cell>

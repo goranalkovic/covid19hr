@@ -21,19 +21,28 @@
       <h2
         class="mdc-typography--headline6"
         style="margin: 0; text-align: left;">
-        Napomena
+        Izvor podataka
       </h2>
-      <p>
+      <!-- <p>
         Ovi su podaci prikupljeni prema informacijama sa sjednica Nacionalnog
         stožera, pa je moguće da se u prijenosu podataka pojavila greška.
         Konačne i provjerene podatke uvijek možete dobiti na službenoj stranici
         Vlade.
+      </p> -->
+      <p>
+        Podaci se dohvaćaju sa službenih izvora Nacionalnog stožera civilne
+        zaštite.
       </p>
     </Content>
     <Actions>
       <ActionButtons>
         <Button href="https://koronavirus.hr" target="_blank">
-          <Label>Službene stranice</Label>
+          <Label>Službene stranice Stožera</Label>
+        </Button>
+        <Button
+          href="https://www.koronavirus.hr/json/?action=podaci_zadnji"
+          target="_blank">
+          <Label>Izvor podataka</Label>
         </Button>
       </ActionButtons>
 

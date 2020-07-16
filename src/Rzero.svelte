@@ -4,6 +4,23 @@
   export let input = [];
   export let r0avg = 1.1;
 
+  //
+
+  let tempDateAxis = [];
+
+  for (let d of dateAxis) {
+    tempDateAxis.push(
+      new Intl.DateTimeFormat("hr", {
+        month: "narrow",
+        day: "numeric",
+      }).format(d)
+    );
+  }
+
+  dateAxis = [...tempDateAxis];
+
+  //
+
   let data = {
     labels: dateAxis,
     datasets: [

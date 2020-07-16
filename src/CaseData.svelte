@@ -10,6 +10,21 @@
 
   //
 
+  let tempDateAxis = [];
+
+  for (let d of dateAxis) {
+    tempDateAxis.push(
+      new Intl.DateTimeFormat("hr", {
+        month: "narrow",
+        day: "numeric",
+      }).format(d)
+    );
+  }
+
+  dateAxis = [...tempDateAxis];
+
+  //
+
   const round = (num, dec = 3) => {
     return num.toFixed(dec);
   };
