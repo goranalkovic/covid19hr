@@ -74,21 +74,22 @@
     // Fetch data
     let response;
     try {
-      // response = await fetch(
-      //   "https://api.jsonbin.io/b/5ea771be66e603359fdfd330/latest",
-      //   {
-      //     method: "GET",
-      //     headers: {
-      //       "secret-key":
+      //response = await fetch(
+       // "https://api.jsonbin.io/b/5ea771be66e603359fdfd330/latest",
+        //{
+         // method: "GET",
+          //headers: {
+           // "secret-key":
       //         "$2b$10$iDj21mWHRqHDHxbScv4fR.0/.C2Iece5C4.eykPNV3jKXRMlxbBiO",
       //     },
       //   }
       // );
 
-      // response = await fetch("https://www.koronavirus.hr/json/?action=podaci");
+       response = await fetch("https://www.koronavirus.hr/json/?action=podaci");
 
-      // let json = await response.json();
+       let json = await response.json();
 
+      /*
       let json = [
         {
           SlucajeviSvijet: 13727388,
@@ -1369,6 +1370,7 @@
           Datum: "2020-02-26 08:00",
         },
       ];
+      */
 
       json = json.reverse();
 
