@@ -85,7 +85,7 @@
       //   }
       // );
 
-       response = await fetch("https://www.koronavirus.hr/json/?action=podaci");
+       response = await fetch("https://www.koronavirus.hr/json/?action=podaci", {mode: 'cors'});
 
        let json = await response.json();
 
