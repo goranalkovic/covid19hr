@@ -6,6 +6,7 @@
   export let deathsDelta;
   export let recoveries;
   export let activeCases;
+  export let activeCasesDelta;
   export let deaths;
 
   //
@@ -61,6 +62,14 @@
     ],
   };
 
+  const data3 = {
+    labels: dateAxis,
+    datasets: [
+      { name: "Novi slučajevi", values: totalCasesDelta },
+      { name: "Aktivni slučajevi", values: activeCasesDelta },
+    ],
+  };
+
   const axisOptions = {
     xIsSeries: true,
   };
@@ -78,6 +87,10 @@
 
   const barOptions = {
     spaceRatio: 0.05,
+  };
+
+  const barOptions2 = {
+    spaceRatio: 0.5,
   };
 
   const colors = [
@@ -116,6 +129,17 @@
     {axisOptions}
     {barOptions}
     colors={['light-blue', 'red']}
+    height="440"
+    type="bar" />
+</section>
+
+<section>
+  <h1>Novi aktivni slučajevi po danima</h1>
+  <Chart
+    data={data3}
+    {axisOptions}
+    {barOptions}
+    colors={['light-blue', 'light-green']}
     height="440"
     type="bar" />
 </section>

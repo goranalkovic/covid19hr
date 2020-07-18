@@ -12,7 +12,7 @@ html, body {
 } */
 
 .topbar-icon {
-	color: #6200ee
+	color: hsl(265, 100%, 97%)
 }
 
 @media (prefers-color-scheme: dark) {
