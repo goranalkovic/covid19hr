@@ -74,9 +74,12 @@
     // Fetch data
     let response;
     try {
+      let dataSourceUrl = "https://www.koronavirus.hr/json/?action=podaci";
       // response = await fetch("https://www.koronavirus.hr/json/?action=podaci", {
       response = await fetch(
-        "https://thingproxy.freeboard.io/fetch/https://www.koronavirus.hr/json/?action=podaci",
+        `https://api.allorigins.win/get?url=${encodeURIComponent(
+          dataSourceUrl
+        )}`,
         {
           method: "GET",
           mode: "cors", // no-cors, *cors, same-origin
