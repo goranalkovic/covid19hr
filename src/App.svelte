@@ -90,9 +90,12 @@
         }
       );
 
-      console.log(response);
+      // console.log(response);
 
       let json = await response.json();
+
+      json = JSON.parse(json.contents);
+      // console.log(json);
 
       json = json.reverse();
 
