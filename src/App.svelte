@@ -158,6 +158,10 @@
         activeCases.slice(-1).pop(),
         recoveries.slice(-1).pop(),
         deaths.slice(-1).pop(),
+        totalCasesDelta.slice(-1).pop(),
+        activeCasesDelta.slice(-1).pop(),
+        recoveriesDelta.slice(-1).pop(),
+        deathsDelta.slice(-1).pop(),
       ];
 
       // R0 average
