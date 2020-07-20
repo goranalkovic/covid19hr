@@ -23,7 +23,7 @@
 
   const colors = ["light-blue", "light-green", "red"];
 
-  const total = (input) => input.reduce((a, b) => a + b, 0);
+  const total = (input) => input[0] + input[1] + input[2];
 </script>
 
 <style>
